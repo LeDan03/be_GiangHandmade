@@ -34,6 +34,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Column
     private String avatarUrl;
 
     @Enumerated(EnumType.STRING)
@@ -41,6 +42,9 @@ public class User implements UserDetails {
 
     @Column
     private String providerId;
+
+    @Column
+    private String role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

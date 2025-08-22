@@ -29,6 +29,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
+    implementation("org.modelmapper:modelmapper:3.2.2")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("com.mysql:mysql-connector-j")
 	annotationProcessor("org.projectlombok:lombok")
@@ -47,6 +48,7 @@ dependencies {
     // OAuth2 Resource Server + JWT
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
+    implementation("org.springframework.boot:spring-boot-starter-validation:3.5.3")
 }
 
 tasks.withType<Test> {
