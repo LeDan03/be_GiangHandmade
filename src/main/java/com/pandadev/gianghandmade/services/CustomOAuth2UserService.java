@@ -51,7 +51,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setProviderId(providerId);
             userRepository.save(user);
         }
-
         return new CustomOAuth2User(
                 oAuth2User.getAuthorities(),
                 oAuth2User.getAttributes(),

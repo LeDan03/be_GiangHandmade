@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +46,12 @@ public class AuthController {
     @ResponseBody
     public ResponseEntity<UserResponse> emailRegistration(@RequestBody RegisterRequest request){
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.emailRegistration(request));
+    }
+
+    @PostMapping("/registration/google")
+    @ResponseBody
+    public ResponseEntity<UserResponse> googleRegistration(@RequestBody OAuth2UserRequest request){
+        return ResponseEntity.ok(authService.googleRegistrationAndLogin(request));
     }
 
     @PostMapping(value = "/accessToken/refresh")

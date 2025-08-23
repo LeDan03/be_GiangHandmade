@@ -42,6 +42,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         cookieService.addValueToCookie("refreshToken", refreshToken, refreshMaxAge, response);
         cookieService.addValueToCookie("accessToken", accessToken, accessMaxAge, response);
 
-        response.sendRedirect("http://localhost:5173/home");
+        response.sendRedirect("http://localhost:5173/");
     }
 }
