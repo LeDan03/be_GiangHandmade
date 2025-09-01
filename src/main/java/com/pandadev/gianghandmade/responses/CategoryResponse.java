@@ -5,15 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+import java.util.List;
+
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Builder
-public class UserResponse {
-    private long id;
+public class CategoryResponse {
+    private int id;
     private String name;
-    private String email;
-    private String gender;
-    private String avatarUrl;
-    private String role;
+    private String description;
+    private List<ProductResponse> products;
 }

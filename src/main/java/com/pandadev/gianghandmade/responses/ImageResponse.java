@@ -6,14 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 @Builder
-public class UserResponse {
+public class ImageResponse {
+
     private long id;
-    private String name;
-    private String email;
-    private String gender;
-    private String avatarUrl;
-    private String role;
+    private String secureUrl;
+    private long productId;
 }

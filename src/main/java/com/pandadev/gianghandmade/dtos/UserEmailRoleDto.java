@@ -5,9 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class UserEmailRoleDto {
     private String email;
     private String role;
+
+    public UserEmailRoleDto(String email, String role) {
+        this.email = email;
+        this.role = role;
+    }
 }

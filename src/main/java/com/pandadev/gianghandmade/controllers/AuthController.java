@@ -21,6 +21,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -33,32 +34,38 @@ public class AuthController {
     @Value("${security.jwt.access.expiration-time}")
     private long accessTokenExpirationTime;
 
-    @PostMapping(value = "/login")
+    @PostMapping(value = "/sessions")
     @ResponseBody
     public ResponseEntity<LoginResponse> emailLogin(@RequestBody LoginRequest loginRequest,
                                                     HttpServletRequest request,
                                                     HttpServletResponse response,
-                                                    @CookieValue(value = "refreshToken", required = false)  String oldRefreshToken) {
+                                                    @CookieValue(value = "refreshToken", required = false) String oldRefreshToken) {
         return ResponseEntity.ok().body(authService.emailLogin(loginRequest, request, response, oldRefreshToken));
     }
 
-    @PostMapping(value = "/registration/email")
+    @PostMapping(value = "/users/email")
     @ResponseBody
-    public ResponseEntity<UserResponse> emailRegistration(@RequestBody RegisterRequest request){
-        return ResponseEntity.status(HttpStatus.CREATED).body(authService.emailRegistration(request));
+    public ResponseEntity<ApiResponse> emailRegistration(@RequestBody RegisterRequest request) {
+        authService.emailRegistration(request);
+        return ResponseEntity.ok().body(new ApiResponse("Đăng ký thành công, hãy xác thực email để đăng nhập ngay nhé!", 200));
     }
 
-    @PostMapping("/registration/google")
+    @GetMapping(value = "/users/email/verification")
+    public String emailVerification(@RequestParam String token, Model model) {
+        return authService.verifyEmail(token, model);
+    }
+
+    @PostMapping(value = "/users/google")
     @ResponseBody
-    public ResponseEntity<UserResponse> googleRegistration(@RequestBody OAuth2UserRequest request){
+    public ResponseEntity<UserResponse> googleRegistration(@RequestBody OAuth2UserRequest request) {
         return ResponseEntity.ok(authService.googleRegistrationAndLogin(request));
     }
 
-    @PostMapping(value = "/accessToken/refresh")
+    @PostMapping(value = "/tokens/refresh")
     @ResponseBody
     public ResponseEntity<TokenResponse> refreshAccessToken(@CookieValue(value = "refreshToken") String refreshToken,
                                                             HttpServletResponse response) {
-        if(refreshToken.isEmpty()){
+        if (refreshToken.isEmpty()) {
             throw new UnauthorizedException("Không có refresh token, không thể cấp lại access token");
         }
         String newAccessToken = authService.refreshAccessToken(refreshToken);
@@ -66,7 +73,7 @@ public class AuthController {
         return ResponseEntity.ok().body(new TokenResponse(newAccessToken));
     }
 
-    @PostMapping(value = "/logout")
+    @DeleteMapping(value = "/sessions")
     @ResponseBody
     public ResponseEntity<ApiResponse> logout(HttpServletResponse response) {
         cookieService.deleteValueFromCookie("accessToken", response);

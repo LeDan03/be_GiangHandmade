@@ -36,7 +36,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         User user = userRepository.findByEmail(oAuth2User.getEmail())
                 .orElseThrow(()->new IllegalException("Không tìm thấy người dùng sau oauth2 login"));
-        String accessToken = jwtUtil.generateAccessToken(user.getEmail(), user.getId(), user.getRole());
+        String accessToken = jwtUtil.generateAccessToken(user.getEmail(), user.getId(), user.getRole().getName());
         String refreshToken = jwtUtil.generateRefreshToken(user.getId());
 
         cookieService.addValueToCookie("refreshToken", refreshToken, refreshMaxAge, response);

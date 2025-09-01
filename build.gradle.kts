@@ -47,8 +47,12 @@ dependencies {
 
     // OAuth2 Resource Server + JWT
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-
     implementation("org.springframework.boot:spring-boot-starter-validation:3.5.3")
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
+    implementation("org.springframework.boot:spring-boot-starter-mail:3.0.6")
+    // https://mvnrepository.com/artifact/com.cloudinary/cloudinary-http44
+    implementation("com.cloudinary:cloudinary-http44:1.39.0")
 }
 
 tasks.withType<Test> {

@@ -28,11 +28,10 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
 
     private static final Set<String> PUBLIC_URLS = Set.of(
-            "/auth/login",
-            "/auth/registration/email",
-            "/auth/accessToken/refresh",
-            "/auth/verify",
-            "/auth/logout"
+            "/auth/sessions",
+            "/auth/users/email",
+            "/auth/tokens/refresh",
+            "/auth/users/email/verification"
     );
 
     @Override
@@ -46,13 +45,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         String accessToken = resolveToken(request);
         if (accessToken == null) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            writeUnauthorizedResponse(response, "Missing token");
             return;
         }
-
         String email = jwtUtil.extractEmail(accessToken);
         if (email == null || !jwtUtil.validateAccessToken(accessToken, email)) {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            writeUnauthorizedResponse(response, "Email hoặc token không hợp lệ");
             return;
         }
 
@@ -63,9 +61,16 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(auth);
         filterChain.doFilter(request, response);
     }
+    private void writeUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
+        response.setContentType("application/json");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.getWriter().write("{\"error\": \"" + message + "\"}");
+        response.getWriter().flush();
+    }
 
     private boolean isPublic(HttpServletRequest request) {
-        return PUBLIC_URLS.stream().anyMatch(matcher -> matcher.matches(request.getRequestURI()));
+        String uri = request.getRequestURI();
+        return PUBLIC_URLS.stream().anyMatch(uri::equals);
     }
 
     private String resolveToken(HttpServletRequest httpServletRequest) {

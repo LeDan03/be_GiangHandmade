@@ -1,11 +1,11 @@
 package com.pandadev.gianghandmade.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.pandadev.gianghandmade.entities.enums.AuthProviders;
 import com.pandadev.gianghandmade.entities.enums.Gender;
+import com.pandadev.gianghandmade.entities.enums.UserStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,7 +15,10 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
+@Builder
+@Table(name = "user")
 public class User implements UserDetails {
 
     @Id
@@ -25,8 +28,8 @@ public class User implements UserDetails {
     @Column()
     private String email;
 
-    @Column()
-    private String username;
+    @Column(unique = true)
+    private String name;
 
     @Column()
     private String password;
@@ -43,8 +46,13 @@ public class User implements UserDetails {
     @Column
     private String providerId;
 
-    @Column
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
+    @ManyToOne
+    @JoinColumn(name = "roleId", referencedColumnName = "id")
+    @JsonBackReference
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -55,17 +63,5 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() { return email; }
-
-    @Override
-    public boolean isAccountNonExpired() { return true; }
-
-    @Override
-    public boolean isAccountNonLocked() { return true; }
-
-    @Override
-    public boolean isCredentialsNonExpired() { return true; }
-
-    @Override
-    public boolean isEnabled() { return true; }
 
 }

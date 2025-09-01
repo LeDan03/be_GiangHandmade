@@ -14,7 +14,7 @@ public class CustomOAuth2User implements OAuth2User {
     private Map<String, Object> attributes;
     private String nameAttributeKey;
     private Long id;
-    private String username;
+    private String name;
     private String email;
     private String gender;
     private String avatarUrl;
@@ -28,11 +28,11 @@ public class CustomOAuth2User implements OAuth2User {
         this.attributes = attributes;
         this.nameAttributeKey = nameAttributeKey;
         this.id = user.getId();
-        this.username = user.getUsername();
+        this.name = user.getName();
         this.email = user.getEmail();
         this.gender = user.getGender().name();
         this.avatarUrl = user.getAvatarUrl();
-        this.role = user.getRole();
+        this.role = user.getRole().getName();
     }
 
     @Override

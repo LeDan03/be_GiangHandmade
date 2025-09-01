@@ -15,7 +15,7 @@ public class UserValidationUtil {
     private static final int MIN_PASSWORD_LENGTH = 8;
 
     public void validateRegistration(RegisterRequest request) {
-        validateUsername(request.getUsername());
+        validateUsername(request.getName());
         validatePassword(request.getPassword());
     }
 

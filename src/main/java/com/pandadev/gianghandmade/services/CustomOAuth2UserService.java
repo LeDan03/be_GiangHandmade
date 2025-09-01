@@ -39,7 +39,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     User newUser = new User();
                     newUser.setEmail(email);
                     newUser.setPassword(passwordEncoder.encode("rdPassword-" + UUID.randomUUID()));
-                    newUser.setUsername(name);
+                    newUser.setName(name);
                     newUser.setAvatarUrl(picture);
                     newUser.setGender(Gender.MALE);
                     newUser.setAuthProviders(AuthProviders.GOOGLE);

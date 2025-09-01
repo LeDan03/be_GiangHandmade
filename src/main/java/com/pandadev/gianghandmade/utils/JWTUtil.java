@@ -1,6 +1,5 @@
 package com.pandadev.gianghandmade.utils;
 
-import com.pandadev.gianghandmade.exceptions.BadRequestException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -33,6 +32,7 @@ public class JWTUtil {
     private SecretKey getAccessSecretKey() {
         return new SecretKeySpec(accessSecretKey.getBytes(StandardCharsets.UTF_8), SignatureAlgorithm.HS256.getJcaName());
     }
+
     private SecretKey getRefreshSecretKey() {
         return new SecretKeySpec(refreshSecretKey.getBytes(StandardCharsets.UTF_8), SignatureAlgorithm.HS512.getJcaName());
     }
@@ -44,7 +44,7 @@ public class JWTUtil {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -63,7 +63,7 @@ public class JWTUtil {
 
     public String extractEmail(String token) {
         Claims claims = extractAccessClaims(token);
-        return claims!=null?claims.getSubject():null;
+        return claims != null ? claims.getSubject() : null;
     }
 
     // Access Token
@@ -78,28 +78,36 @@ public class JWTUtil {
         return claims != null ? Long.parseLong(claims.getSubject()) : null;
     }
 
-    public  boolean isTokenExpired(Claims claims) {
+    public boolean isTokenExpired(Claims claims) {
         return claims == null || claims.getExpiration().before(new Date());
     }
 
     public String extractRole(String token) {
         Claims claims = extractAccessClaims(token);
-        return claims!=null?claims.get("role", String.class):null;
+        return claims != null ? claims.get("role", String.class) : null;
     }
 
     public boolean validateAccessToken(String accessToken, String email) {
         Claims claims = extractAccessClaims(accessToken);
         return claims != null &&
                 email.equals(claims.getSubject()) &&
-                !isTokenExpired(claims)&&
+                !isTokenExpired(claims) &&
                 validateIssuer(claims);
     }
 
     public boolean validateRefreshToken(String refreshToken) {
         Claims claims = extractRefreshClaims(refreshToken);
         return claims != null &&
-                validateIssuer(claims)&&
+                validateIssuer(claims) &&
                 !isTokenExpired(claims);
+    }
+
+    public boolean validateVerifyToken(String token) {
+        Claims claims = extractAccessClaims(token);
+        return claims != null &&
+                !isTokenExpired(claims) &&
+                extractUserIdFromSubject(token) != null &&
+                validateIssuer(claims);
     }
 
     public boolean validateIssuer(Claims claims) {
@@ -123,10 +131,24 @@ public class JWTUtil {
         return Jwts.builder()
                 .setIssuer(issuer)
                 .setSubject(String.valueOf(userId))
-                .claim("type","refresh")
+                .claim("type", "refresh")
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis()+refreshExpirationTime))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationTime))
                 .signWith(getRefreshSecretKey())
                 .compact();
+    }
+
+    public String generateEmailVerificationToken(long id) {
+        return Jwts.builder()
+                .setSubject(String.valueOf(id))
+                .setExpiration(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
+                .setIssuer(issuer)
+                .signWith(getAccessSecretKey())
+                .compact();
+    }
+
+    public String extractUserIdFromSubject(String token) {
+        Claims claims = extractAccessClaims(token);
+        return claims != null ? claims.getSubject() : null;
     }
 }
