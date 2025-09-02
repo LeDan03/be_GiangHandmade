@@ -36,10 +36,10 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     void changeCategoryByIdIn(@Param("categoryId") int categoryId, @Param("productIds") List<Integer> productIds);
 
     @Query(value = """
-        SELECT * FROM product
-        WHERE MATCH(name, description) AGAINST(:keyword IN NATURAL LANGUAGE MODE)
-        ORDER BY MATCH(name, description) AGAINST(:keyword) DESC
-        """,
-            nativeQuery = true)
+        SELECT p FROM Product p
+        WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+           OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        """)
     List<Product> search(@Param("keyword") String keyword);
+
 }

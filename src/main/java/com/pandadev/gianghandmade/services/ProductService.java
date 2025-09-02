@@ -46,6 +46,7 @@ public class ProductService {
         List<Product> products;
         if (keyword != null && !keyword.trim().isEmpty()) {
             products = productRepository.search(keyword.trim());
+//            logger.info("Search với key: {}, kết quả: {}", keyword, products.get(0).getName());
         } else {
             products = productRepository.findAll();
         }

@@ -1,5 +1,6 @@
 package com.pandadev.gianghandmade.controllers;
 
+import com.pandadev.gianghandmade.entities.enums.ProductStatus;
 import com.pandadev.gianghandmade.requests.ProductRequest;
 import com.pandadev.gianghandmade.responses.ApiResponse;
 import com.pandadev.gianghandmade.responses.ProductResponse;
@@ -9,7 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +29,7 @@ public class ProductController {
     }
 
     @GetMapping(value = "/{productId}")
-    public ResponseEntity<ProductResponse> getProductById(@PathVariable int productId){
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable int productId) {
         return ResponseEntity.ok().body(productService.getProductById(productId));
     }
 
@@ -45,4 +49,14 @@ public class ProductController {
         productService.deleteProduct(productId);
         return ResponseEntity.ok().body(new ApiResponse("Đã xóa sản phẩm", 200));
     }
+
+    @GetMapping("/statuses")
+    public ResponseEntity<List<Map<String, String>>> getAllStatuses() {
+        return ResponseEntity.ok().body(
+                Arrays.stream(ProductStatus.values())
+                        .map(status -> Map.of("value", status.name(), "label", status.getLabel()))
+                        .collect(Collectors.toList())
+        );
+    }
+
 }
