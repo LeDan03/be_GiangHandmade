@@ -38,6 +38,12 @@ public class Product {
     @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
     private int quantity;
 
+    @Column(columnDefinition = "INT DEFAULT 5")
+    private int rating;
+
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private int reviews;
+
     @Column
     private Timestamp createdAt;
 

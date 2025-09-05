@@ -26,6 +26,8 @@ public class ProductMapper {
                 .soldCount(product.getSoldCount())
                 .createdAt(product.getCreatedAt())
                 .status(product.getStatus().name())
+                .rating(product.getRating())
+                .reviews(product.getReviews())
                 .build();
     }
 

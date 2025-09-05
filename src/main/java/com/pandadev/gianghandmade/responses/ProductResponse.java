@@ -25,8 +25,10 @@ public class ProductResponse {
     private int quantity;
     private List<ImageResponse> images;
     private int categoryId;
-
     private int soldCount;
     private Timestamp createdAt;
     private String status;
+
+    private int rating;
+    private int reviews;
 }

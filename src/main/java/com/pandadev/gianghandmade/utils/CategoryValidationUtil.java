@@ -20,9 +20,6 @@ public class CategoryValidationUtil {
             throw new BadRequestException("Tên phân loại không thể để trống");
         }
         String[] words = name.trim().split("\\s+");
-        if (words.length < 3) {
-            throw new BadRequestException("Tên phân loại quá ngắn");
-        }
         if (words.length > 8 || name.length() > 50) {
             throw new BadRequestException("Tên phân loại quá dài");
         }

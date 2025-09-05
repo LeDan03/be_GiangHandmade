@@ -67,7 +67,6 @@ public class ProductService {
         return productMapper.toResponses(products);
     }
 
-
     public ProductResponse getProductById(int id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isEmpty())
@@ -162,14 +161,13 @@ public class ProductService {
         productRepository.deleteById(productId);
     }
 
-    public void changeCategoryById(int productId, int categoryId) {
-        if (categoryRepository.existsById(categoryId)) {
-            throw new NotFoundException("Phân loại không tồn tại");
+    public void deleteProductsByIds(List<Integer> productIds) {
+        if(productIds.isEmpty()){
+            return;
         }
-        if (!productRepository.existsById(productId)) {
-            throw new NotFoundException("Sản phẩm đã bị xóa");
+        for(Integer productId : productIds){
+            deleteProduct(productId);
         }
-        productRepository.changeCategoryById(categoryId, productId);
     }
 
     public void changeCategoryByIds(List<Integer> productIds, int categoryId) {
@@ -177,6 +175,7 @@ public class ProductService {
             productRepository.changeCategoryByIdIn(categoryId, productIds);
         } catch (Exception e) {
             logger.warn("Lỗi khi thay đổi phân loại");
+            throw new RuntimeException("Lỗi thay đổi phân loại cho sản phẩm: " + e.getMessage());
         }
     }
 }

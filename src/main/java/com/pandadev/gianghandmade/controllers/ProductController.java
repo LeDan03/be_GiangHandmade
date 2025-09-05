@@ -44,10 +44,16 @@ public class ProductController {
         return ResponseEntity.ok(productService.updateProduct(productId, productRequest));
     }
 
-    @DeleteMapping
-    public ResponseEntity<ApiResponse> deleteProduct(@RequestParam int productId) {
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<ApiResponse> deleteProduct(@PathVariable int productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.ok().body(new ApiResponse("Đã xóa sản phẩm", 200));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<ApiResponse> deleteProductsByIds(@RequestBody List<Integer> productIds) {
+        productService.deleteProductsByIds(productIds);
+        return ResponseEntity.ok().body(new ApiResponse("Đã xóa các sản phẩm được chọn", 200));
     }
 
     @GetMapping("/statuses")
@@ -57,6 +63,12 @@ public class ProductController {
                         .map(status -> Map.of("value", status.name(), "label", status.getLabel()))
                         .collect(Collectors.toList())
         );
+    }
+
+    @PutMapping(value = "/{categoryId}")
+    public ResponseEntity<ApiResponse> changeProductsCategory(@RequestBody List<Integer> productIds, @PathVariable int categoryId) {
+        productService.changeCategoryByIds(productIds, categoryId);
+        return ResponseEntity.ok().body(new ApiResponse("Đã thay đổi phân loại cho danh sách", 200));
     }
 
 }

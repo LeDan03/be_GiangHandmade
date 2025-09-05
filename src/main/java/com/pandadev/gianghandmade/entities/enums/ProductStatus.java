@@ -1,5 +1,8 @@
 package com.pandadev.gianghandmade.entities.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum ProductStatus {
     AVAILABLE("Đang bán"),
     OUT_OF_STOCK("Hết hàng"),
@@ -15,7 +18,4 @@ public enum ProductStatus {
         this.label = label;
     }
 
-    public String getLabel() {
-        return label;
-    }
 }

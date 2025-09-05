@@ -28,13 +28,13 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(categoryRequest));
     }
 
-    @PutMapping
-    public ResponseEntity<CategoryResponse> updateCategory(@RequestParam int categoryId,@RequestBody CategoryRequest categoryRequest){
+    @PutMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable int categoryId,@RequestBody CategoryRequest categoryRequest){
         return ResponseEntity.ok().body(categoryService.updateCategoryById(categoryId, categoryRequest));
     }
 
-    @DeleteMapping
-    public ResponseEntity<ApiResponse> deleteCategory(@RequestParam int categoryId){
+    @DeleteMapping("/{categoryId}")
+    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable int categoryId){
         categoryService.deleteCategoryById(categoryId);
         return ResponseEntity.ok().body(new ApiResponse("Đã xóa phân loại",200));
     }

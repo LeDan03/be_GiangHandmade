@@ -12,20 +12,13 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product,Integer> {
     boolean existsByCategoryId(int categoryId);
+//    void changeStatusById(ProductStatus status,int id);
 
     List<Product> findByCategoryId(int categoryId);
     List<Product> findByStatus(ProductStatus status);
 
     List<Product> findAllByOrderByCreatedAtDesc();//Moi nhat
     List<Product> findAllByOrderByCreatedAt();//Cu nhat
-
-    @Modifying
-    @Query(value = """
-            UPDATE Product p
-            SET p.category=(SELECT c FROM Category c WHERE c.id=:categoryId)
-            WHERE p.id=:productId
-            """)
-    void changeCategoryById(@Param("categoryId") int categoryId, @Param("productId") int productId);
 
     @Modifying
     @Query(value = """
