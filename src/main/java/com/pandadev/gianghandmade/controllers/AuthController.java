@@ -63,9 +63,9 @@ public class AuthController {
 
     @PostMapping(value = "/tokens/refresh")
     @ResponseBody
-    public ResponseEntity<TokenResponse> refreshAccessToken(@CookieValue(value = "refreshToken") String refreshToken,
+    public ResponseEntity<TokenResponse> refreshAccessToken(@CookieValue(value = "refreshToken", required = false) String refreshToken,
                                                             HttpServletResponse response) {
-        if (refreshToken.isEmpty()) {
+        if ( refreshToken == null||refreshToken.isEmpty()) {
             throw new UnauthorizedException("Không có refresh token, không thể cấp lại access token");
         }
         String newAccessToken = authService.refreshAccessToken(refreshToken);

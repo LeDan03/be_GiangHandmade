@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse> handleBadCredentialsException(BadCredentialsException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiResponse("Mật khẩu không chính xác",400));
+                .body(new ApiResponse("Tài khoản chưa được đăng ký hoặc mật khẩu không chính xác",400));
     }
 
     @ExceptionHandler(NotFoundException.class)

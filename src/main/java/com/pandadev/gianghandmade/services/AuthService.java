@@ -2,6 +2,7 @@ package com.pandadev.gianghandmade.services;
 
 import com.pandadev.gianghandmade.configs.security.oauth.CustomOAuth2User;
 import com.pandadev.gianghandmade.dtos.UserEmailRoleDto;
+import com.pandadev.gianghandmade.entities.Cart;
 import com.pandadev.gianghandmade.entities.Role;
 import com.pandadev.gianghandmade.entities.User;
 import com.pandadev.gianghandmade.entities.enums.AuthProviders;
@@ -12,15 +13,16 @@ import com.pandadev.gianghandmade.exceptions.ConflicException;
 import com.pandadev.gianghandmade.exceptions.ForbiddenException;
 import com.pandadev.gianghandmade.exceptions.NotFoundException;
 import com.pandadev.gianghandmade.mappers.UserMapper;
+import com.pandadev.gianghandmade.repositories.ImageRepository;
 import com.pandadev.gianghandmade.repositories.RoleRepository;
 import com.pandadev.gianghandmade.repositories.UserRepository;
 import com.pandadev.gianghandmade.requests.LoginRequest;
 import com.pandadev.gianghandmade.requests.RegisterRequest;
 import com.pandadev.gianghandmade.responses.LoginResponse;
 import com.pandadev.gianghandmade.responses.UserResponse;
+import com.pandadev.gianghandmade.utils.ImageUtil;
 import com.pandadev.gianghandmade.utils.JWTUtil;
 import com.pandadev.gianghandmade.utils.UserValidationUtil;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -52,20 +54,12 @@ public class AuthService {
     @Value("${security.cookie.access.maxAge}")
     private long accessTokenExpiration;
 
-    @Value("${lgbt.user.default.avt}")
-    private String otherAvatarUrl;
-    @Value("${male.user.default.avt}")
-    private String maleAvatarUrl;
-    @Value("${female.user.default.avt}")
-    private String femaleAvatarUrl;
-    @Value("${giang.user.default.avt}")
-    private String giangAvatarUrl;
-
     @Value("${app.server.ip}")
     private String serverIp;
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final ImageRepository imageRepository;
 
     private final CookieService cookieService;
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -74,29 +68,9 @@ public class AuthService {
     private final JWTUtil jwtUtil;
     private final UserMapper userMapper;
     private final UserValidationUtil userValidationUtil;
+    private final ImageUtil imageUtil;
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @PostConstruct
-    public void createAdmin(){
-        if(userRepository.existsByIdNotNull()){
-            return;
-        }
-        Optional<Role> adminRoleOpt = roleRepository.findByName("ADMIN");
-        if(adminRoleOpt.isEmpty()){
-            throw new NotFoundException("Admin Role Not Found");
-        }
-        Role adminRole = adminRoleOpt.get();
-        User admin = new User();
-        admin.setName("Hương Giang");
-        admin.setGender(Gender.FEMALE);
-        admin.setPassword(bCryptPasswordEncoder.encode("GiangYeuDan_ed"));
-        admin.setRole(adminRole);
-        admin.setAvatarUrl(giangAvatarUrl);
-        admin.setStatus(UserStatus.MANAGER);
-        admin.setEmail("ng.hgiang1012@gmail.com");
-        userRepository.save(admin);
-    }
 
     //Don user rac lúc 0h0p
     @Scheduled(cron = "0 0 0 * * ?")
@@ -124,14 +98,17 @@ public class AuthService {
         AuthProviders authProviders = AuthProviders.valueOf(registerRequest.getAuthProviders().toUpperCase());
 
         User user = new User();
+        Cart cart = new Cart();
+        cart.setUser(user);
         user.setEmail(registerRequest.getEmail());
         user.setName(registerRequest.getName());
         user.setPassword(bCryptPasswordEncoder.encode(registerRequest.getPassword()));
         user.setGender(gender);
         user.setAuthProviders(authProviders);
         user.setRole(role_user);
-        user.setAvatarUrl(getAvatarUrl(gender));
+        user.setAvatar(imageUtil.getAvatarByGender(gender.name()));
         user.setStatus(userStatus);
+        user.setCart(cart);
         userRepository.save(user);
 
         return user;
@@ -171,14 +148,6 @@ public class AuthService {
     public UserResponse googleRegistrationAndLogin(OAuth2UserRequest request) {
         CustomOAuth2User user = (CustomOAuth2User) customOAuth2UserService.loadUser(request);
         return userMapper.toUserResponse(user);
-    }
-
-    public String getAvatarUrl(Gender gender) {
-        return switch (gender) {
-            case MALE -> maleAvatarUrl;
-            case FEMALE -> femaleAvatarUrl;
-            default -> otherAvatarUrl;
-        };
     }
 
     public LoginResponse emailLogin(LoginRequest loginRequest, HttpServletRequest request,

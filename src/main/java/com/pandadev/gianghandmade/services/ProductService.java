@@ -3,6 +3,7 @@ package com.pandadev.gianghandmade.services;
 import com.pandadev.gianghandmade.entities.Category;
 import com.pandadev.gianghandmade.entities.Image;
 import com.pandadev.gianghandmade.entities.Product;
+import com.pandadev.gianghandmade.entities.ProductImage;
 import com.pandadev.gianghandmade.entities.enums.ProductStatus;
 import com.pandadev.gianghandmade.exceptions.NotFoundException;
 import com.pandadev.gianghandmade.mappers.ImageMapper;
@@ -63,7 +64,6 @@ public class ProductService {
                     .filter(p -> p.getStatus() == statusEnum)
                     .toList();
         }
-
         return productMapper.toResponses(products);
     }
 
@@ -83,7 +83,7 @@ public class ProductService {
 
         Category category = categoryOpt.get();
         Product product = new Product();
-        List<Image> images = imageMapper.toEntities(productRequest.getImages(), product);
+        List<ProductImage> images = imageMapper.toProductImageEntities(productRequest.getImages(), product);
 
         product.setName(productValidationUtil.cleanProductName(productRequest.getName()));
         product.setDescription(productValidationUtil.cleanProductDescription(productRequest.getDescription()));
@@ -118,10 +118,10 @@ public class ProductService {
     }
 
     public void updateProductImages(Product product, ProductRequest productRequest) {
-        List<Image> oldImages = product.getImages();
-        List<Image> newImages = imageMapper.toEntities(productRequest.getImages(), product);
+        List<ProductImage> oldImages = product.getImages();
+        List<ProductImage> newImages = imageMapper.toProductImageEntities(productRequest.getImages(), product);
 
-        List<Image> imagesToDelete = oldImages.stream()
+        List<ProductImage> imagesToDelete = oldImages.stream()
                 .filter(oldImg -> newImages.stream()
                         .noneMatch(newImg -> newImg.getPublicId().equals(oldImg.getPublicId())))
                 .toList();
@@ -154,7 +154,7 @@ public class ProductService {
         if (!productRepository.existsById(productId)) {
             throw new NotFoundException("Sản phẩm cần xóa không tồn tại");
         }
-        List<Image> productImage = imageRepository.findByProductId(productId);
+        List<ProductImage> productImage = imageRepository.findByProductId(productId);
         productImage.forEach(image -> {
             cloudinaryService.delete(image.getPublicId());
         });

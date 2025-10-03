@@ -1,20 +1,21 @@
 package com.pandadev.gianghandmade.responses;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
-public class UserResponse {
-    private long id;
-    private String name;
-    private String email;
-    private String gender;
-    private ImageResponse avatar;
-    private String role;
+public class CartResponse {
     private int cartId;
+    private int quantity;
+    private BigDecimal totalPrice;
+    private List<CartItemResponse> items;
 }

@@ -22,7 +22,7 @@ public class ProductMapper {
                 .price(product.getPrice())
                 .quantity(product.getQuantity())
                 .categoryId(product.getCategory().getId())
-                .images(imageMapper.toResponses(product.getImages()))
+                .images(imageMapper.toProductImageResponses(product.getImages()))
                 .soldCount(product.getSoldCount())
                 .createdAt(product.getCreatedAt())
                 .status(product.getStatus().name())

@@ -6,8 +6,10 @@ import com.pandadev.gianghandmade.entities.enums.AuthProviders;
 import com.pandadev.gianghandmade.entities.enums.Gender;
 import com.pandadev.gianghandmade.exceptions.NotFoundException;
 import com.pandadev.gianghandmade.repositories.RoleRepository;
+import com.pandadev.gianghandmade.repositories.UserRepository;
 import com.pandadev.gianghandmade.requests.RegisterRequest;
 import com.pandadev.gianghandmade.responses.UserResponse;
+import com.pandadev.gianghandmade.utils.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +38,10 @@ public class UserMapper {
     private final PasswordEncoder passwordEncoder;
 
     private final RoleRepository roleRepository;
+    private final ImageMapper imageMapper;
+
+    private final ImageUtil imageUtil;
+    private final UserRepository userRepository;
 
     public UserResponse toUserResponse(User user) {
         return UserResponse.builder()
@@ -43,8 +49,9 @@ public class UserMapper {
                 .email(user.getEmail())
                 .name(user.getUsername())
                 .gender(user.getGender().name())
-                .avatarUrl(user.getAvatarUrl())
+                .avatar(imageMapper.toAvatarResponse(user.getAvatar()))
                 .role(user.getRole().getName())
+                .cartId(user.getCart().getId())
                 .build();
     }
 
@@ -53,11 +60,8 @@ public class UserMapper {
     }
 
     public User toUser(RegisterRequest registerRequest) {
-        String avtUrl = registerRequest.getGender().equals("male")
-                ? maleAvatarUrl
-                : (registerRequest.getGender().equals("female") ? femaleAvatarUrl : otherAvatarUrl);
         Optional<Role> userOpt = roleRepository.findByName("USER");
-        if(!userOpt.isPresent()){
+        if(userOpt.isEmpty()){
             throw new NotFoundException("Role USER không tồn tại");
         }
         Role user = userOpt.get();
@@ -68,7 +72,7 @@ public class UserMapper {
                 .name(registerRequest.getName())
                 .gender(Gender.valueOf(registerRequest.getGender().toUpperCase()))
                 .authProviders(AuthProviders.valueOf(registerRequest.getAuthProviders().toUpperCase()))
-                .avatarUrl(avtUrl)
+                .avatar(imageUtil.getAvatarByGender(registerRequest.getGender().toUpperCase()))
                 .build();
     }
 

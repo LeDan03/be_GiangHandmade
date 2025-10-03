@@ -70,8 +70,17 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private boolean isPublic(HttpServletRequest request) {
         String uri = request.getRequestURI();
-        return PUBLIC_URLS.stream().anyMatch(uri::equals);
+        String method = request.getMethod();
+        // Chỉ cho GET /products và GET /categories (không phải /products/{id} hay /categories/{id})
+        if ("GET".equalsIgnoreCase(method)) {
+            if ("/products".equals(uri) || "/categories".equals(uri)) {
+                return true;
+            }
+        }
+        // Các URL public khác
+        return PUBLIC_URLS.contains(uri);
     }
+
 
     private String resolveToken(HttpServletRequest httpServletRequest) {
         String bearer = httpServletRequest.getHeader("Authorization");

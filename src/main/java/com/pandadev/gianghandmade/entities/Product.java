@@ -53,9 +53,9 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
-    @OneToMany(mappedBy = "product",  cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Image> images;
+    private List<ProductImage> images;
 
     @ManyToOne
     @JoinColumn(name = "categoryId", referencedColumnName = "id")

@@ -29,10 +29,10 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     void changeCategoryByIdIn(@Param("categoryId") int categoryId, @Param("productIds") List<Integer> productIds);
 
     @Query(value = """
-        SELECT p FROM Product p
-        WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
-           OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
-        """)
+        SELECT * FROM product p
+        WHERE p.name COLLATE utf8mb4_general_ci LIKE CONCAT('%', :keyword, '%')
+           OR p.description COLLATE utf8mb4_general_ci LIKE CONCAT('%', :keyword, '%')
+        ORDER BY p.created_at DESC
+        """, nativeQuery = true)
     List<Product> search(@Param("keyword") String keyword);
-
 }

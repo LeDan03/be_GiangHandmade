@@ -1,15 +1,19 @@
 package com.pandadev.gianghandmade.responses;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
+
+import java.math.BigDecimal;
 
 @NoArgsConstructor
-@Data
 @AllArgsConstructor
-@SuperBuilder
-public class ImageResponse {
+@Data
+@Builder
+public class CartItemResponse {
     private long id;
-    private String secureUrl;
+    private int productId;
+    private int quantity;
+    private BigDecimal priceSnapshot;
 }

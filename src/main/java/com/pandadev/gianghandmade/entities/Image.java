@@ -6,13 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
-@Table(name = "images")
+@SuperBuilder
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Image {
 
     @Id
@@ -25,8 +26,4 @@ public class Image {
     @Column(nullable = false)
     private String publicId;
 
-    @ManyToOne
-    @JoinColumn(name = "productId", referencedColumnName = "id")
-    @JsonBackReference
-    private Product product;
 }

@@ -1,15 +1,14 @@
-package com.pandadev.gianghandmade.responses;
+package com.pandadev.gianghandmade.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor
-@Data
 @AllArgsConstructor
-@SuperBuilder
-public class ImageResponse {
-    private long id;
+@Data
+public class CloudinaryUploadDto {
+
     private String secureUrl;
+    private String publicId;
 }

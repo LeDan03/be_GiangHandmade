@@ -23,7 +23,7 @@ public class ProductResponse {
     private String description;
     private BigDecimal price;
     private int quantity;
-    private List<ImageResponse> images;
+    private List<ProductImageResponse> images;
     private int categoryId;
     private int soldCount;
     private Timestamp createdAt;

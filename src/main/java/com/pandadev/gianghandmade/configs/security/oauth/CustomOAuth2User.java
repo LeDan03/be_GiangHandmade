@@ -1,6 +1,8 @@
 package com.pandadev.gianghandmade.configs.security.oauth;
 
+import com.pandadev.gianghandmade.entities.Image;
 import com.pandadev.gianghandmade.entities.User;
+import com.pandadev.gianghandmade.responses.ImageResponse;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -13,11 +15,11 @@ public class CustomOAuth2User implements OAuth2User {
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
     private String nameAttributeKey;
-    private Long id;
+    private int id;
     private String name;
     private String email;
     private String gender;
-    private String avatarUrl;
+    private Image avatar;
     private String role;
 
     public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities,
@@ -30,9 +32,13 @@ public class CustomOAuth2User implements OAuth2User {
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
-        this.gender = user.getGender().name();
-        this.avatarUrl = user.getAvatarUrl();
-        this.role = user.getRole().getName();
+        this.avatar = user.getAvatar();
+
+        this.gender = user.getGender() != null ? user.getGender().name() : "MALE";
+
+        this.role = (user.getRole() != null && user.getRole().getName() != null)
+                ? user.getRole().getName()
+                : "USER"; // fallback mặc định
     }
 
     @Override

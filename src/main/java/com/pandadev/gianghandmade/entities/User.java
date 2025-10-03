@@ -23,7 +23,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
 
     @Column()
     private String email;
@@ -37,9 +37,6 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column
-    private String avatarUrl;
-
     @Enumerated(EnumType.STRING)
     private AuthProviders authProviders;
 
@@ -49,10 +46,22 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "avatarId",referencedColumnName = "id")
+    private Avatar avatar;
+
     @ManyToOne
     @JoinColumn(name = "roleId", referencedColumnName = "id")
     @JsonBackReference
     private Role role;
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    private Cart cart;
+
+    @Override
+    public boolean isEnabled() {
+        return this.status.equals(UserStatus.ACTIVE);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
