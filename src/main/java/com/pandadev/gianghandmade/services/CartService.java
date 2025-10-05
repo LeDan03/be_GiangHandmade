@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,8 +48,10 @@ public class CartService {
 
         CartItem cartItem;
         if (existingItemOpt.isPresent()) {
-            // Nếu có thì update số lượng
+            // Nếu có thì update số lượng, priceSnapshot
             cartItem = existingItemOpt.get();
+            BigDecimal productPrice = cartItem.getProduct().getPrice();
+            cartItem.setPriceSnapshot(productPrice.multiply(BigDecimal.valueOf(cartItemRequest.getQuantity())));
             cartItem.setQuantity(cartItem.getQuantity() + cartItemRequest.getQuantity());
         } else {
             // Nếu chưa có thì tạo mới
@@ -68,7 +71,9 @@ public class CartService {
             cartItemRepository.delete(cartItem);
             return null;
         } else {
+            BigDecimal productPrice = cartItem.getProduct().getPrice();
             cartItem.setQuantity(quantity);
+            cartItem.setPriceSnapshot(productPrice.multiply(BigDecimal.valueOf(quantity)));
             cartItemRepository.save(cartItem);
             return cartMapper.toCartItemResponse(cartItem);
         }

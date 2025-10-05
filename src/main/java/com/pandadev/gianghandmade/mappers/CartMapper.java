@@ -4,6 +4,7 @@ import com.pandadev.gianghandmade.entities.Cart;
 import com.pandadev.gianghandmade.entities.CartItem;
 import com.pandadev.gianghandmade.entities.Product;
 import com.pandadev.gianghandmade.exceptions.BadRequestException;
+import com.pandadev.gianghandmade.repositories.CartItemRepository;
 import com.pandadev.gianghandmade.repositories.CartRepository;
 import com.pandadev.gianghandmade.repositories.ProductRepository;
 import com.pandadev.gianghandmade.requests.CartItemRequest;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class CartMapper {
 
     private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
 
     public CartItem toCartItem(CartItemRequest request) {
@@ -35,7 +37,11 @@ public class CartMapper {
         CartItem  cartItem = new CartItem();
         cartItem.setProduct(product);
         cartItem.setCart(cart);
-        cartItem.setQuantity(product.getQuantity());
+        cartItem.setQuantity(request.getQuantity());
+        cartItem.setPriceSnapshot(product.getPrice().multiply(BigDecimal.valueOf(request.getQuantity())));
+
+        cartItemRepository.save(cartItem);
+
         return cartItem;
     }
     public CartItemResponse toCartItemResponse(CartItem item) {
