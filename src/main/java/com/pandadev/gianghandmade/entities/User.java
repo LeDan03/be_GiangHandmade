@@ -1,6 +1,7 @@
 package com.pandadev.gianghandmade.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pandadev.gianghandmade.entities.enums.AuthProviders;
 import com.pandadev.gianghandmade.entities.enums.Gender;
 import com.pandadev.gianghandmade.entities.enums.UserStatus;
@@ -57,6 +58,14 @@ public class User implements UserDetails {
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     private Cart cart;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @JsonManagedReference
+    private List<Order> orders;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @JsonManagedReference
+    private List<ShippingInfo> shippingInfos;
 
     @Override
     public boolean isEnabled() {
